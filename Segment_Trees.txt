@@ -1,0 +1,192 @@
+
+
+/// Point Update And range Query
+int arr[200005] ;
+int tree[800025] ;
+void build(int node, int start, int endi)
+{
+    if(start == endi)
+    {
+        // Leaf node will have a single element
+        tree[node] = arr[start];
+    }
+    else
+    {
+        int mid = (start + endi) / 2;
+        // Recurse on the left child
+        build(2*node, start, mid);
+        // Recurse on the right child
+        build(2*node+1, mid+1, endi);
+        // Internal node will have the sum of both of its children
+        tree[node] = tree[2*node] + tree[2*node+1];
+    }
+}
+void update(int node, int start, int endi, int idx, int val)
+{
+    if(start == endi)
+    {
+        /// Leaf node
+        arr[idx] = max(val,arr[idx ]) ;
+        tree[node] = max(val , tree[node] ) ;
+    }
+    else
+    {
+        int mid = (start + endi) / 2;
+        if(start <= idx and idx <= mid)
+        {
+            /// If idx is in the left child, recurse on the left child
+            update(2*node, start, mid, idx, val);
+        }
+        else
+        {
+            /// if idx is in the right child, recurse on the right child
+            update(2*node+1, mid+1, endi, idx, val);
+        }
+        /// Internal node will have the sum of both of its children
+        tree[node] = max(tree[2*node] , tree[2*node+1]);
+    }
+}
+int query(int node, int start, int endi, int l, int r)
+{
+    if(r < start or endi < l)
+    {
+        /// range represented by a node is completely outside the given range
+        return 0;
+    }
+    if(l <= start and endi <= r)
+    {
+        /// range represented by a node is completely inside the given range
+        return tree[node];
+    }
+    /// range represented by a node is partially inside and partially outside the given range
+    int mid = (start + endi) / 2;
+    int p1 = query(2*node, start, mid, l, r);
+    int p2 = query(2*node+1, mid+1, endi, l, r);
+    return max(p1 , p2);
+}
+/// Range Update And Range Query for minimum
+int arr[200005] ;
+int t[800025] ;
+int lazy[800025];
+void build(int node, int start, int endi)
+{
+    if(start == endi)
+    {
+        // Leaf node will have a single element
+        t[node] = arr[start];
+    }
+    else
+    {
+        int mid = (start + endi) / 2;
+        // Recurse on the left child
+        build(2*node, start, mid);
+        // Recurse on the right child
+        build(2*node+1, mid+1, endi);
+        // Internal node will have the sum of both of its children
+        t[node] = min(t[2*node] , t[2*node+1]);
+    }
+}
+void push(int v) {
+    t[v*2] += lazy[v];
+    lazy[v*2] += lazy[v];
+    t[v*2+1] += lazy[v];
+    lazy[v*2+1] += lazy[v];
+    lazy[v] = 0;
+}
+void updateRange(int v, int tl, int tr, int l, int r, int addend) {
+    if (l > r)
+        return;
+    if (l == tl && tr == r) {
+        t[v] += addend;
+        lazy[v] += addend;
+    } else {
+        push(v);
+        int tm = (tl + tr) / 2;
+        updateRange(v*2, tl, tm, l, min(r, tm), addend);
+        updateRange(v*2+1, tm+1, tr, max(l, tm+1), r, addend);
+        t[v] = min(t[v*2], t[v*2+1]);
+    }
+}
+ 
+int queryRange(int v, int tl, int tr, int l, int r) {
+    if (l > r)
+        return 100000000000000000;
+    if (l <= tl && tr <= r)
+        return t[v];
+    push(v);
+    int tm = (tl + tr) / 2;
+    return min(queryRange(v*2, tl, tm, l, min(r, tm)),
+               queryRange(v*2+1, tm+1, tr, max(l, tm+1), r));
+}
+/// Range Assignment And Range sum
+int ar[maxN];
+int st[4*maxN] , lazy[4*maxN];
+ 
+void build(int si , int ss , int se)
+{
+	if(ss == se)
+	{
+		st[si] = ar[ss];
+		return;
+	}
+ 
+	int mid = (ss + se) / 2;
+ 
+	build(2*si , ss , mid);
+	build(2*si+1 , mid+1 , se);
+ 
+	st[si] = st[2*si] + st[2*si+1];
+}
+ 
+int query(int si , int ss , int se , int qs , int qe)
+{
+	if(lazy[si] != 0)
+	{
+		int dx = lazy[si]-1;
+		lazy[si] = 0;
+		st[si] = dx * (se-ss+1);
+ 
+		if(ss != se)
+		lazy[2*si] = dx+1 , lazy[2*si+1] = dx+1;
+	}
+ 
+	if(ss > qe || se < qs) return 0;
+ 
+	if(ss >= qs && se <= qe)
+	return st[si];
+ 
+	int mid = (ss + se) / 2;
+	return query(2*si , ss , mid , qs , qe) + query(2*si+1 , mid+1 , se , qs , qe);
+}
+ 
+void update(int si , int ss , int se , int qs , int qe , int val)
+{
+	if(lazy[si] != 0)
+	{
+		int dx = lazy[si]-1;
+		lazy[si] = 0;
+		st[si] = dx * (se-ss+1);
+ 
+		if(ss != se)
+		lazy[2*si] = dx+1 , lazy[2*si+1] = dx+1;
+	}
+ 
+	if(ss > qe || se < qs) return;
+ 
+	if(ss >= qs && se <= qe)
+	{
+		int dx = (se - ss + 1) * val;
+		st[si] = dx;
+ 
+		if(ss != se)
+		lazy[2*si] = val+1 , lazy[2*si+1] = val+1;
+		else ar[ss]=val;
+		return;
+	}
+ 
+	int mid = (ss + se) / 2;
+	update(2*si , ss , mid , qs , qe , val);
+	update(2*si+1 , mid+1 , se , qs , qe , val);
+ 
+	st[si] = st[2*si] + st[2*si+1];
+}

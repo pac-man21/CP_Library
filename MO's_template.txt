@@ -1,0 +1,79 @@
+///E. XOR and Favorite Number
+#include <bits/stdc++.h>
+#define int long long int
+#include <time.h>
+using namespace std;
+const int N = 1e5+5;
+int n, block = 350;
+int cnt[(int)2e6+1],ans;
+int k;
+int a[N];
+struct pt
+{
+	int l;
+	int r;
+	int id;
+};
+bool comp(pt &x, pt &y)
+{
+	// Sorting via sqrt decomposition
+	if(x.l/block != y.l/block)	return x.l/block < y.l/block;
+	return x.r < y.r;
+}
+int cur_l,cur_r;
+void add(int pos)
+{
+    ans+= cnt[a[pos ]^k ];
+	cnt[a[pos]]++;
+	// Condition for change in answer
+}
+void del(int pos)
+{
+	cnt[a[pos]]--;
+	ans-= cnt[a[pos]^k ];
+	// Condition for change in answer
+}
+signed main()
+{
+	ios_base::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+	int Q ;
+	cin >> n>>Q>>k;
+	block = sqrt(n);
+	for(int i = 0; i < n; i++)	cin >> a[i];
+	for(int i = n-1;i>= 0;i--){
+        a[i]^= a[i+1];
+	}
+	vector<pt> v;
+	v.resize(Q);
+	for(int i = 0; i < Q; i++) {
+		cin >> v[i].l >> v[i].r;
+		v[i].l--, v[i].r--;
+		v[i].id = i;
+ 	}
+ 	sort(v.begin() , v.end() ,comp);
+ 	ans = cur_l = cur_r = 0;
+ 	vector <int> res(Q);
+ 	for(int i = 0; i < Q; i++)
+ 	{
+ 		int L = v[i].l , R = v[i].r;
+ 		while(cur_l < L) {
+			del(cur_l);
+			cur_l++;
+		}
+		while(cur_l > L) {
+			add(cur_l-1);
+			cur_l--;
+		}
+		while(cur_r <= R+1) {
+			add(cur_r);
+			cur_r++;
+		}
+		while(cur_r > R+2) {
+			del(cur_r-1);
+			cur_r--;
+		}
+		res[v[i].id] = ans;
+ 	}
+ 	for(auto it : res)	cout << it << '\n';
+    return 0;
+}

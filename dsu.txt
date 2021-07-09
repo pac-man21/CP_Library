@@ -1,0 +1,31 @@
+vector <int> graph[200005];
+int Rank[200005];
+int Parent[200005 ];/// Initialize parent
+int Find(int i) {
+    if (Parent[i] == i) {
+        return i;
+    }
+    else{
+        int result = Find(Parent[i]);
+        Parent[i] = result;
+        return result;
+     }
+}
+void uni(int i, int j) {
+    int irep = Find(i);
+    int jrep = Find(j);
+    if (irep == jrep)
+        return;
+    int irank = Rank[irep];
+    int jrank = Rank[jrep];
+    if (irank < jrank) {
+        Parent[irep] = jrep;
+    }
+    else if (jrank < irank) {
+        Parent[jrep] = irep;
+    }
+    else{
+        Parent[irep] = jrep;
+        Rank[jrep]++;
+    }
+}

@@ -1,0 +1,37 @@
+/// modular exp
+int power(int x, int y, int p)
+{
+    int res = 1;     // Initialize result
+ 
+    x = x % p; // Update x if it is more than or
+                // equal to p
+ 
+    while (y > 0)
+    {
+        // If y is odd, multiply x with result
+        if (y & 1)
+            res = (res*x) % p;
+ 
+        // y must be even now
+        y = y>>1; // y = y/2
+        x = (x*x) % p;
+    }
+    return res;
+}
+/// sieve for smallest prime factor
+int MAX = 10000100;
+bool v[10000100];
+int sp[10000100];
+void Sieve(){
+	for (long long int i = 2; i < MAX; i += 2)	sp[i] = 2;//even numbers have smallest prime factor 2
+	for (long long int i = 3; i < MAX; i += 2){
+		if (!v[i]){
+			sp[i] = i;
+			for (long long int j = i; (j*i) < MAX; j += 2){
+				if (!v[j*i])	v[j*i] = true, sp[j*i] = i;
+			}
+		}
+	}
+}
+
+///Euler Toitient
