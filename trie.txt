@@ -1,0 +1,74 @@
+class Trie{
+private :
+    Trie * arr[27];
+    int c;///number of words that end at this point
+    int low;
+public :
+    Trie(){
+        for(int i = 0;i<27;i++){
+            arr[i] = NULL;
+        }
+        c = 0;
+        low = 0;
+    }
+    void insert(Trie *root  , string &s ){
+        Trie * p = root;
+        for(int i = 0;i<s.length();i++ ){
+            int ch = s[i] - 'a';
+            if(!p->arr[ch ] ){
+                p->arr[ch ] = new Trie();
+            }
+            p->low++;
+            p = p->arr[ch];
+        }
+        p->c++;
+        p->low++;
+    }
+    bool search(Trie *root, string &s){
+        Trie * p = root;
+        for(int i = 0;i<s.length();i++ ){
+            int ch = s[i] - 'a';
+            if(!p->arr[ch ] ){
+                return 0 ;
+            }
+            p = p->arr[ch];
+        }
+        return (p->c) > 0;
+    }
+    void deletestring(Trie *root  , string &s ){
+        Trie * p = root;
+        for(int i = 0;i<s.length();i++ ){
+            int ch = s[i] - 'a';
+            if(!p->arr[ch ] ){
+                return ;
+            }
+            p = p->arr[ch];
+        }
+        p->c--;
+        return ;
+    }
+    void deletetrie(Trie *root ){
+        if(root == NULL){
+            return ;
+        }
+        for(int i = 0;i<26;i++){
+            deletetrie(root->arr[i] );
+        }
+        delete root;
+        return ;
+    }
+    string sup(Trie *root  , string &s){
+        Trie *p = root;
+        string w = "";
+        for(int i = 0;i<s.length();i++ ){
+            if(p->low == 1 ){
+                return w;
+            }
+            p = p->arr[s[i] - 'a' ];
+            w.push_back(s[i] );
+        }
+
+        return w;
+        //return w;
+    }
+};
