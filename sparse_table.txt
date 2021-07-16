@@ -1,0 +1,21 @@
+#include<bits/stdc++.h>
+#define int long long int
+using namespace std;
+int st1[200005][26];
+int logr[200005];
+signed main() {
+    ios::sync_with_stdio(0);
+    for (int i = 2; i <= 200005; i++){
+        logr[i] = logr[i/2] + 1;
+    }
+    for (int i = 1; i <= n; i++){
+        st1[i][0] = arr1[i];
+    }
+    for (int j = 1; j <= 25; j++)
+    for (int i = 1; i + (1 << j) <= n+1; i++)
+        st1[i][j] = max(st1[i][j-1], st1[i + (1 << (j - 1))][j - 1]);
+        
+    ///query
+    int j1 = logr[l - i + 1];
+        int v1 = max(st1[i][j1], st1[l - (1 << j1) + 1][j1]);
+}
