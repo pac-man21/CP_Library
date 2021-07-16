@@ -1,0 +1,47 @@
+int func(int t ){
+    
+}
+int ter(int s, int e  ){
+    if(s==e){
+        return s;
+    }
+    if(s+1 == e){
+        if(func(s) >func(e) ){
+            return e;
+        }
+        else{
+            return s;
+        }
+ 
+    }
+    if(s+2 == e){
+        int a_1 = func(s);
+        int a_2 = func(s+1);
+        int a_3 = func(s+2);
+        if(a_1 <a_2 ){
+            if(a_1<a_3 ){
+                return s;
+            }
+            else{
+                return s+2;
+            }
+        }
+        else{
+            if(a_2<a_3 ){
+                return s+1;
+            }
+            else{
+                return s+2;
+            }
+        }
+    }
+    int l = (s*2+ e)/3;
+    int r = (s+ 2*e)/3;
+    if(func(l) <func(r) ){
+        e = r;
+    }
+    else{
+        s = l;
+    }
+    return ter(s , e );
+}
